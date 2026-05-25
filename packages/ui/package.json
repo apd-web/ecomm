@@ -1,0 +1,12 @@
+{
+  "name": "@ecomm/ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/styles/tokens.css",
+    "./index.css": "./src/styles/index.css",
+    "./tailwind.preset": "./tailwind.preset.js"
+  }
+}

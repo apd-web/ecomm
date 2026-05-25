@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui;
+  background: radial-gradient(circle at 10% 10%, rgb(36 38 60), rgb(9 10 14) 55%);
+  min-height: 100vh;
+}
+
+.section-pad {
+  padding: clamp(3.5rem, 6vw, 6rem) 1.5rem;
+}
+
+.section-tight {
+  padding: clamp(2rem, 4vw, 3.5rem) 1.5rem;
+}
+
+.hero-grid {
+  background-image:
+    radial-gradient(circle at 10% 10%, rgb(255 63 146 / 0.12), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgb(114 94 255 / 0.15), transparent 60%);
+}
