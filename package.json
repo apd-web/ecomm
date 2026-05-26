@@ -4,18 +4,20 @@
   "version": "0.1.0",
   "packageManager": "pnpm@9.12.0",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "frontend",
+    "frontend/packages/*",
+    "backend",
+    "backend/packages/*"
   ],
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm -r --parallel --filter @ecomm/web --filter @ecomm/api dev",
     "dev:web": "pnpm --filter @ecomm/web dev",
     "dev:api": "pnpm --filter @ecomm/api dev",
-    "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
     "format": "prettier -w .",
-    "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
     "prepare": "husky install"
   },
   "devDependencies": {

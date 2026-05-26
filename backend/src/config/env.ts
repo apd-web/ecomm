@@ -1,11 +1,32 @@
 import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
 
 dotenv.config();
+
+// In monorepos, `process.cwd()` can be the repo root when running filtered scripts.
+// Explicitly try the API package `.env` (and then repo root `.env`) so required
+// vars like MONGODB_URI are consistently loaded.
+if (!process.env.MONGODB_URI) {
+  const apiEnvPath = fileURLToPath(new URL("../../../.env", import.meta.url));
+  const result = dotenv.config({ path: apiEnvPath });
+  if (process.env.MONGODB_URI === "" && result.parsed?.MONGODB_URI) {
+    process.env.MONGODB_URI = result.parsed.MONGODB_URI;
+  }
+}
+
+if (!process.env.MONGODB_URI) {
+  const repoEnvPath = fileURLToPath(new URL("../../../../.env", import.meta.url));
+  const result = dotenv.config({ path: repoEnvPath });
+  if (process.env.MONGODB_URI === "" && result.parsed?.MONGODB_URI) {
+    process.env.MONGODB_URI = result.parsed.MONGODB_URI;
+  }
+}
 
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT ?? 4000),
   mongoUri: process.env.MONGODB_URI ?? "",
+  skipDb: process.env.SKIP_DB === "true",
   clientOrigin: process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET ?? "",
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? "",

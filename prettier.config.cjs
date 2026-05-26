@@ -1,3 +1,3 @@
-const base = require("./packages/config/prettier.base.cjs");
+const base = require("./frontend/packages/config/prettier.base.cjs");
 
 module.exports = base;

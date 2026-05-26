@@ -48,6 +48,29 @@ const buildSession = async (refreshToken: string, userId: string, context?: Auth
   });
 };
 
+const issueTokensForUser = async (
+  user: {
+    id: string;
+    roles: string[];
+    name: string;
+    email: string;
+    provider: string;
+    emailVerified: boolean;
+  },
+  context?: AuthContext,
+) => {
+  const payload = { sub: user.id, roles: user.roles };
+  const accessToken = signAccessToken(payload);
+  const refreshToken = signRefreshToken(payload);
+  await buildSession(refreshToken, user.id, context);
+
+  return {
+    user: toSafeUser(user),
+    accessToken,
+    refreshToken,
+  };
+};
+
 export const authService = {
   findUserByEmail: (email: string) => userRepository.findByEmail(email),
   register: async (name: string, email: string, password: string, context?: AuthContext) => {
@@ -59,17 +82,8 @@ export const authService = {
     const passwordHash = await hashPassword(password);
     const user = await userRepository.create({ name, email, passwordHash, provider: "local" });
 
-    const payload = { sub: user.id, roles: user.roles };
-    const accessToken = signAccessToken(payload);
-    const refreshToken = signRefreshToken(payload);
-    await buildSession(refreshToken, user.id, context);
     await tokenService.issueEmailVerification(user.id, user.email);
-
-    return {
-      user: toSafeUser(user),
-      accessToken,
-      refreshToken,
-    };
+    return issueTokensForUser(user, context);
   },
   login: async (email: string, password: string, context?: AuthContext) => {
     const user = await userRepository.findByEmail(email);
@@ -86,16 +100,7 @@ export const authService = {
       throw new ApiError(403, "Email not verified");
     }
 
-    const payload = { sub: user.id, roles: user.roles };
-    const accessToken = signAccessToken(payload);
-    const refreshToken = signRefreshToken(payload);
-    await buildSession(refreshToken, user.id, context);
-
-    return {
-      user: toSafeUser(user),
-      accessToken,
-      refreshToken,
-    };
+    return issueTokensForUser(user, context);
   },
   refresh: async (refreshToken: string, context?: AuthContext) => {
     let payload;
@@ -143,4 +148,5 @@ export const authService = {
       await sessionRepository.revoke(session.id);
     }
   },
+  issueTokensForUser,
 };
