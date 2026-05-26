@@ -7,7 +7,7 @@ dotenv.config();
 // Explicitly try the API package `.env` (and then repo root `.env`) so required
 // vars like MONGODB_URI are consistently loaded.
 if (!process.env.MONGODB_URI) {
-  const apiEnvPath = fileURLToPath(new URL("../../../.env", import.meta.url));
+  const apiEnvPath = fileURLToPath(new URL("../../.env", import.meta.url));
   const result = dotenv.config({ path: apiEnvPath });
   if (process.env.MONGODB_URI === "" && result.parsed?.MONGODB_URI) {
     process.env.MONGODB_URI = result.parsed.MONGODB_URI;
@@ -15,7 +15,7 @@ if (!process.env.MONGODB_URI) {
 }
 
 if (!process.env.MONGODB_URI) {
-  const repoEnvPath = fileURLToPath(new URL("../../../../.env", import.meta.url));
+  const repoEnvPath = fileURLToPath(new URL("../../../.env", import.meta.url));
   const result = dotenv.config({ path: repoEnvPath });
   if (process.env.MONGODB_URI === "" && result.parsed?.MONGODB_URI) {
     process.env.MONGODB_URI = result.parsed.MONGODB_URI;

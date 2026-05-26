@@ -148,5 +148,20 @@ export const authService = {
       await sessionRepository.revoke(session.id);
     }
   },
+  changePassword: async (userId: string, currentPassword: string, newPassword: string) => {
+    const user = await userRepository.findById(userId);
+    if (!user || !user.passwordHash) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const isMatch = await comparePassword(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new ApiError(401, "Invalid current password");
+    }
+
+    const newHash = await hashPassword(newPassword);
+    await userRepository.updatePassword(userId, newHash);
+    await sessionRepository.revokeAll(userId);
+  },
   issueTokensForUser,
 };

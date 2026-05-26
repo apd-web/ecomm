@@ -6,6 +6,8 @@ import { Badge, Button, Container, Tag } from "@ecomm/ui";
 import { CartDrawer } from "../components/CartDrawer";
 import { MobileNav } from "../components/MobileNav";
 import { ToastProvider, useToast } from "../components/Toast";
+import { authApi } from "../services/authApi";
+import { useAuthStore } from "../store/authStore";
 import { Link } from "react-router-dom";
 
 const links = [
@@ -19,6 +21,17 @@ const links = [
 function MainLayoutContent({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
   const { push } = useToast();
+  const user = useAuthStore((state) => state.user);
+  const clear = useAuthStore((state) => state.clear);
+
+  const handleSignOut = async () => {
+    try {
+      await authApi.logout();
+    } finally {
+      clear();
+      push({ title: "Signed out", message: "Session ended successfully." });
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -61,10 +74,29 @@ function MainLayoutContent({ children }: { children: ReactNode }) {
             >
               Quick action
             </Button>
-            <Button className="hidden md:inline-flex" size="sm" variant="outline">
-              Sign in
-            </Button>
-            <Button size="sm">Get started</Button>
+            {user ? (
+              <>
+                <Link to="/profile">
+                  <Button className="hidden md:inline-flex" size="sm" variant="outline">
+                    Account
+                  </Button>
+                </Link>
+                <Button size="sm" variant="ghost" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/signin">
+                  <Button className="hidden md:inline-flex" size="sm" variant="outline">
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button size="sm">Get started</Button>
+                </Link>
+              </>
+            )}
             <Button size="sm" variant="outline" onClick={() => setCartOpen(true)}>
               Cart
             </Button>

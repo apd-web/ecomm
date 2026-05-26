@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   forgotPassword,
+  changePassword,
   login,
   logout,
   me,
@@ -29,6 +30,7 @@ authRouter.post("/auth/verify-email", verifyEmail);
 authRouter.post("/auth/resend-verification", resendVerification);
 authRouter.post("/auth/forgot-password", forgotPassword);
 authRouter.post("/auth/reset-password", resetPassword);
+authRouter.post("/auth/change-password", authenticate, changePassword);
 authRouter.get("/auth/admin-probe", authenticate, requireRole("admin"), (_req, res) => {
   res.json({ data: { ok: true } });
 });

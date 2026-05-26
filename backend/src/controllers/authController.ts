@@ -8,6 +8,7 @@ import { clearRefreshCookie, setRefreshCookie } from "../utils/cookies";
 import { ApiError } from "../utils/apiError";
 import { env } from "../config/env";
 import {
+  changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
   logoutSchema,
@@ -108,5 +109,15 @@ export const resetPassword: RequestHandler = asyncHandler(async (req: Request, r
   const payload = resetPasswordSchema.parse(req.body);
   const passwordHash = await hashPassword(payload.password);
   await tokenService.resetPassword(payload.token, passwordHash);
+  res.json(ok({ success: true }));
+});
+
+export const changePassword: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const payload = changePasswordSchema.parse(req.body);
+  await authService.changePassword(req.user.sub, payload.currentPassword, payload.newPassword);
   res.json(ok({ success: true }));
 });

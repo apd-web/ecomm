@@ -8,6 +8,7 @@ type OAuthProfile = {
   email: string;
   name: string;
   avatarUrl?: string;
+  emailVerified?: boolean;
 };
 
 type ProviderConfig = {
@@ -119,6 +120,7 @@ export const oauthService = {
         email?: string;
         name?: string;
         picture?: string;
+        email_verified?: boolean;
       };
 
       if (!data.sub || !data.email) {
@@ -130,6 +132,7 @@ export const oauthService = {
         email: data.email,
         name: data.name ?? data.email,
         avatarUrl: data.picture,
+        emailVerified: data.email_verified ?? false,
       };
     }
 
@@ -154,6 +157,7 @@ export const oauthService = {
     };
 
     let email = data.email ?? "";
+    let emailVerified = false;
     if (!email) {
       const emailResponse = await fetch("https://api.github.com/user/emails", {
         headers: {
@@ -171,6 +175,7 @@ export const oauthService = {
         }>;
         const primary = emails.find((entry) => entry.primary && entry.verified) ?? emails[0];
         email = primary?.email ?? "";
+        emailVerified = Boolean(primary?.verified);
       }
     }
 
@@ -183,6 +188,7 @@ export const oauthService = {
       email,
       name: data.name ?? data.login ?? email,
       avatarUrl: data.avatar_url ?? undefined,
+      emailVerified,
     };
   },
 };

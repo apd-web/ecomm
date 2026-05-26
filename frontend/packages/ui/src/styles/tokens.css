@@ -1,19 +1,24 @@
 :root {
   --color-bg: 9 10 14;
   --color-surface: 18 19 26;
+  --color-surface-2: 25 26 34;
   --color-text: 244 244 246;
   --color-muted: 167 171 184;
   --color-accent: 255 63 146;
   --color-accent-2: 114 94 255;
+  --color-accent-3: 89 215 255;
   --color-accent-soft: 255 111 182;
   --color-success: 54 211 153;
   --color-warning: 255 183 77;
+  --color-danger: 255 107 107;
   --color-line: 46 48 63;
   --glass-bg: 255 255 255;
   --glass-alpha: 0.06;
+  --glass-border: 255 255 255;
   --radius-lg: 14px;
   --radius-xl: 20px;
   --shadow-soft: 0 20px 60px rgb(0 0 0 / 0.45);
+  --shadow-strong: 0 30px 80px rgb(0 0 0 / 0.55);
 }
 
 .theme-dark {
