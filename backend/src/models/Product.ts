@@ -14,6 +14,15 @@ type InventoryInfo = {
   track: boolean;
 };
 
+type VariantInfo = {
+  name?: string;
+  sku?: string;
+  price?: number;
+  quantity?: number;
+  track?: boolean;
+  attributes?: Record<string, string>;
+};
+
 export type ProductDocument = mongoose.Document & {
   name: string;
   slug: string;
@@ -30,6 +39,7 @@ export type ProductDocument = mongoose.Document & {
   ratingAvg: number;
   ratingCount: number;
   inventory: InventoryInfo;
+  variants: VariantInfo[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -69,6 +79,22 @@ const productSchema = new mongoose.Schema<ProductDocument>(
     ratingAvg: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
     inventory: { type: inventorySchema, default: () => ({}) },
+    variants: {
+      type: [
+        new mongoose.Schema(
+          {
+            name: { type: String },
+            sku: { type: String },
+            price: { type: Number },
+            quantity: { type: Number, default: 0 },
+            track: { type: Boolean, default: true },
+            attributes: { type: Object, default: {} },
+          },
+          { _id: true },
+        ),
+      ],
+      default: [],
+    },
   },
   { timestamps: true },
 );

@@ -22,4 +22,26 @@ export const productRepository = {
   update: (id: string, data: Record<string, unknown>) =>
     Product.findByIdAndUpdate(id, data, { new: true }).exec(),
   remove: (id: string) => Product.findByIdAndDelete(id).exec(),
+  decrementInventory: async (productId: string, qty: number, variantId?: string) => {
+    if (variantId) {
+      const res = await Product.findOneAndUpdate(
+        {
+          _id: productId,
+          "variants._id": variantId,
+          "variants.track": true,
+          "variants.quantity": { $gte: qty },
+        },
+        { $inc: { "variants.$.quantity": -qty } },
+        { new: true },
+      ).exec();
+      return res;
+    }
+
+    const res = await Product.findOneAndUpdate(
+      { _id: productId, "inventory.track": true, "inventory.quantity": { $gte: qty } },
+      { $inc: { "inventory.quantity": -qty } },
+      { new: true },
+    ).exec();
+    return res;
+  },
 };

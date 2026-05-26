@@ -1,16 +1,31 @@
 import { Button } from "@ecomm/ui";
 
-export function SearchBar() {
+type SearchBarProps = {
+  value: string;
+  placeholder?: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+};
+
+export function SearchBar({ value, placeholder, onChange, onSubmit }: SearchBarProps) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-2xl border border-line/70 bg-surface/70 px-4 py-3">
+    <form
+      className="flex w-full items-center gap-3 rounded-2xl border border-line/70 bg-surface/70 px-4 py-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
       <input
         aria-label="Search products"
         className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted"
-        placeholder="Search products, drops, accessories"
+        placeholder={placeholder ?? "Search products, drops, accessories"}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
       />
-      <Button size="sm" variant="ghost">
+      <Button size="sm" variant="ghost" type="submit">
         Search
       </Button>
-    </div>
+    </form>
   );
 }

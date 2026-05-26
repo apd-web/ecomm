@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 
 import { router } from "./app/routes";
+import { AppProviders } from "./providers/AppProviders";
 
 const root = document.getElementById("root");
 
@@ -16,6 +17,8 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppProviders>
+      <RouterProvider router={router} />
+    </AppProviders>
   </StrictMode>,
 );
