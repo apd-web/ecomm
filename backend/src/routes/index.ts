@@ -4,6 +4,7 @@ import { authRouter } from "./auth";
 import { catalogRouter } from "./catalog";
 import { healthRouter } from "./health";
 import { oauthRouter } from "./oauth";
+import { paymentsRouter } from "./payments";
 import { productRouter } from "./products";
 import { ordersRouter } from "./orders";
 
@@ -15,3 +16,4 @@ apiV1Router.use(oauthRouter);
 apiV1Router.use(catalogRouter);
 apiV1Router.use(productRouter);
 apiV1Router.use(ordersRouter);
+apiV1Router.use(paymentsRouter);

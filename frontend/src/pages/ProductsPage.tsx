@@ -5,15 +5,14 @@ import { ProductCard } from "../components/ProductCard";
 import { SearchBar } from "../components/SearchBar";
 import { EmptyState } from "../components/EmptyState";
 
-import { useMemo, useState } from "react";
-import { productApi, ProductListResponse } from "../services/productApi";
+import { useState } from "react";
+import { productApi } from "../services/productApi";
 import { catalogApi } from "../services/catalogApi";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useQuery } from "@tanstack/react-query";
 
 export function ProductsPage() {
   const [q, setQ] = useState("");
-  // Data is loaded via react-query below; local state is not needed here.
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
   const [activeBrand, setActiveBrand] = useState<string | undefined>(undefined);
@@ -36,14 +35,12 @@ export function ProductsPage() {
     queryFn: () => catalogApi.listCategories(),
   });
 
-  const productsQueryKey = [
-    "products",
-    { q: debouncedQ, brand: activeBrand, category: activeCategory, page, limit },
-  ];
-  const useQueryAny: any = useQuery;
-  const productsQuery: any = useQueryAny(
-    productsQueryKey as any,
-    () =>
+  const productsQuery = useQuery({
+    queryKey: [
+      "products",
+      { q: debouncedQ, brand: activeBrand, category: activeCategory, page, limit },
+    ],
+    queryFn: () =>
       productApi.list({
         q: debouncedQ || undefined,
         brand: activeBrand,
@@ -51,8 +48,8 @@ export function ProductsPage() {
         page,
         limit,
       }),
-    { keepPreviousData: true },
-  );
+    placeholderData: (prev) => prev,
+  });
 
   const productsData: { items: any[]; meta?: { total?: number } } = productsQuery.data ?? {
     items: [],
@@ -61,7 +58,6 @@ export function ProductsPage() {
   const products = productsData.items || [];
   const total = productsData.meta?.total ?? products.length;
   const productsLoading = productsQuery.isLoading;
-  const isFetching = productsQuery.isFetching;
 
   return (
     <Section size="wide">

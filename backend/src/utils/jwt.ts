@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 
 import { env } from "../config/env";
 import type { UserRole } from "../models/User";
@@ -9,11 +10,15 @@ export type JwtPayload = {
 };
 
 export const signAccessToken = (payload: JwtPayload) => {
-  return jwt.sign(payload, env.jwtAccessSecret, { expiresIn: env.jwtAccessTtl });
+  return jwt.sign(payload, env.jwtAccessSecret, {
+    expiresIn: env.jwtAccessTtl as SignOptions["expiresIn"],
+  });
 };
 
 export const signRefreshToken = (payload: JwtPayload) => {
-  return jwt.sign(payload, env.jwtRefreshSecret, { expiresIn: env.jwtRefreshTtl });
+  return jwt.sign(payload, env.jwtRefreshSecret, {
+    expiresIn: env.jwtRefreshTtl as SignOptions["expiresIn"],
+  });
 };
 
 export const verifyAccessToken = (token: string) => {

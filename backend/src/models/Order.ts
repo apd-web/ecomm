@@ -39,4 +39,6 @@ const orderSchema = new mongoose.Schema<OrderDocument>(
   { timestamps: true },
 );
 
+orderSchema.index({ paymentIntentId: 1 });
+
 export const Order = mongoose.model<OrderDocument>("Order", orderSchema);

@@ -106,7 +106,12 @@ export const oauthLinkStart: RequestHandler = asyncHandler(async (req, res) => {
     });
   }
 
-  res.redirect(oauthService.buildAuthUrl(provider, state));
+  const authUrl = oauthService.buildAuthUrl(provider, state);
+  if (req.query.mode === "json") {
+    return res.json(ok({ url: authUrl }));
+  }
+
+  res.redirect(authUrl);
 });
 
 export const oauthCallback: RequestHandler = asyncHandler(async (req, res) => {

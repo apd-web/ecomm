@@ -19,7 +19,12 @@ export const revokeSession: RequestHandler = asyncHandler(async (req: Request, r
     throw new ApiError(401, "Unauthorized");
   }
 
-  await sessionService.revoke(req.params.sessionId, req.user.sub);
+  const sessionId = req.params.sessionId;
+  if (!sessionId) {
+    throw new ApiError(400, "Session id is required");
+  }
+
+  await sessionService.revoke(sessionId, req.user.sub);
   res.json(ok({ success: true }));
 });
 

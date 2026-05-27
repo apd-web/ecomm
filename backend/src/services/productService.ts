@@ -45,14 +45,22 @@ export const productService = {
       filter.$text = { $search: query.q };
     }
 
-    const sortMap: Record<string, Record<string, 1 | -1>> = {
-      newest: { createdAt: -1 },
-      "price-asc": { price: 1 },
-      "price-desc": { price: -1 },
-      rating: { ratingAvg: -1, ratingCount: -1 },
-    };
-
-    const sort = query.sort ? sortMap[query.sort] : sortMap.newest;
+    let sort: Record<string, 1 | -1>;
+    switch (query.sort) {
+      case "price-asc":
+        sort = { price: 1 };
+        break;
+      case "price-desc":
+        sort = { price: -1 };
+        break;
+      case "rating":
+        sort = { ratingAvg: -1, ratingCount: -1 };
+        break;
+      case "newest":
+      default:
+        sort = { createdAt: -1 };
+        break;
+    }
 
     const [items, total] = await Promise.all([
       productRepository.list(filter, sort, skip, limit),

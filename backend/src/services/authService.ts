@@ -11,6 +11,7 @@ import { sessionRepository } from "../repositories/sessionRepository";
 import { userRepository } from "../repositories/userRepository";
 import { tokenService } from "./tokenService";
 import { env } from "../config/env";
+import type { UserRole } from "../models/User";
 
 type AuthContext = {
   userAgent?: string;
@@ -21,7 +22,7 @@ const toSafeUser = (user: {
   id: string;
   name: string;
   email: string;
-  roles: string[];
+  roles: UserRole[];
   provider: string;
   emailVerified: boolean;
 }) => ({
@@ -51,7 +52,7 @@ const buildSession = async (refreshToken: string, userId: string, context?: Auth
 const issueTokensForUser = async (
   user: {
     id: string;
-    roles: string[];
+    roles: UserRole[];
     name: string;
     email: string;
     provider: string;
@@ -83,7 +84,17 @@ export const authService = {
     const user = await userRepository.create({ name, email, passwordHash, provider: "local" });
 
     await tokenService.issueEmailVerification(user.id, user.email);
-    return issueTokensForUser(user, context);
+    return issueTokensForUser(
+      {
+        id: user.id,
+        roles: user.roles,
+        name: user.name,
+        email: user.email,
+        provider: user.provider,
+        emailVerified: user.emailVerified,
+      },
+      context,
+    );
   },
   login: async (email: string, password: string, context?: AuthContext) => {
     const user = await userRepository.findByEmail(email);
@@ -100,7 +111,17 @@ export const authService = {
       throw new ApiError(403, "Email not verified");
     }
 
-    return issueTokensForUser(user, context);
+    return issueTokensForUser(
+      {
+        id: user.id,
+        roles: user.roles,
+        name: user.name,
+        email: user.email,
+        provider: user.provider,
+        emailVerified: user.emailVerified,
+      },
+      context,
+    );
   },
   refresh: async (refreshToken: string, context?: AuthContext) => {
     let payload;
@@ -136,7 +157,14 @@ export const authService = {
     }
 
     return {
-      user: toSafeUser(user),
+      user: toSafeUser({
+        id: user.id,
+        roles: user.roles,
+        name: user.name,
+        email: user.email,
+        provider: user.provider,
+        emailVerified: user.emailVerified,
+      }),
       accessToken,
       refreshToken: newRefreshToken,
     };
